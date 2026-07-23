@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+cache/
+out/
+broadcast/
+node_modules/
+frontend/dist/
+.vercel/
+*.log

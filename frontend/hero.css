@@ -1,0 +1,24 @@
+.hero-enter {
+  animation: hero-enter 0.8s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+.hero-enter-delay {
+  animation-delay: 0.12s;
+}
+
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter {
+    animation: none;
+  }
+}
