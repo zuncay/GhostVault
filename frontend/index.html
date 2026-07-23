@@ -4,84 +4,91 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="GhostVault — autonomous recovery vaults powered by Ritual TEE." />
-    <title>GhostVault — Your signal outlives you</title>
+    <title>GhostVault — Autonomous recovery on Ritual</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/vault-os.css" />
+    <style>.hero > .reveal{opacity:1;transform:none}</style>
   </head>
   <body>
-    <div class="noise"></div><div class="cursor-light"></div><div class="scroll-line"><i></i></div>
-    <aside class="rail">
-      <a class="sigil" href="#top" aria-label="GhostVault home">GV</a>
-      <nav><a href="#manifest">01</a><a href="#sequence">02</a><a href="#guardrails">03</a></nav>
-      <span class="rail-chain">RITUAL / 1979</span>
-    </aside>
+    <div class="ambient"></div><div class="cursor-light"></div><div class="scroll-line"><i></i></div>
+    <header class="site-header">
+      <nav class="container nav">
+        <a class="brand" href="#top"><span class="brand-mark">G</span><b>GhostVault</b></a>
+        <div class="nav-links"><a href="#overview">Overview</a><a href="#workflow">Workflow</a><a href="#security">Security</a><a href="#faq">FAQ</a></div>
+        <div class="nav-end"><span class="network-dot"><i></i>Ritual 1979</span><a class="button button-small" href="/app.html">Launch app <b>↗</b></a></div>
+      </nav>
+    </header>
 
-    <div class="page">
-      <header class="hud">
-        <a class="wordmark" href="/">GHOST<span>VAULT</span></a>
-        <div class="hud-status"><i></i><span>RECOVERY NETWORK ONLINE</span></div>
-        <a class="launch-link" href="/app.html">ENTER CONTROL ROOM <b>↗</b></a>
-      </header>
+    <main id="top">
+      <section class="hero container">
+        <div class="hero-badge reveal"><i></i> LIVE ON RITUAL TESTNET</div>
+        <h1 class="reveal">A vault that waits<br />for <span>your signal.</span></h1>
+        <p class="hero-copy reveal">Secure assets and encrypted instructions behind a recurring heartbeat. If the signal stops, Ritual verifies the evidence and your recovery policy executes on-chain.</p>
+        <div class="hero-actions reveal"><a class="button" href="/app.html">Create your vault <b>↗</b></a><a class="secondary-button" href="#overview">Explore protocol</a></div>
+        <div class="protocol-row reveal"><span>POWERED BY</span><b>RITUAL SCHEDULER</b><i></i><b>TEE HTTP</b><i></i><b>ENSHRINED LLM</b><i></i><b>ON-CHAIN ESCROW</b></div>
 
-      <main id="top">
-        <section class="opening">
-          <div class="opening-index">CASE FILE <b>GV—001</b></div>
-          <div class="opening-copy">
-            <p class="kicker">A programmable afterlife for digital intent.</p>
-            <h1>Stay present.<br /><span>Even in silence.</span></h1>
-            <p class="intro">GhostVault turns a recurring heartbeat into an autonomous recovery condition. Assets wait in escrow. Ritual watches the signal. Code—not a custodian—decides what happens next.</p>
-            <div class="opening-actions"><a href="/app.html">ARM A VAULT <b>↗</b></a><a href="#manifest">READ THE FILE <b>↓</b></a></div>
+        <div class="product-shell reveal">
+          <div class="browser-bar"><div><i></i><i></i><i></i></div><span>app.ghostvault / vault-001</span><b>SECURE SESSION</b></div>
+          <div class="product-body">
+            <aside class="preview-sidebar"><div class="mini-brand"><span>G</span></div><i class="active"></i><i></i><i></i><i></i><small>1979</small></aside>
+            <div class="preview-main">
+              <div class="preview-head"><div><small>RECOVERY CONTROL</small><h3>Good evening, operator.</h3></div><button>＋ New vault</button></div>
+              <div class="preview-grid">
+                <div class="heartbeat-card">
+                  <div class="card-label"><span>PRIMARY HEARTBEAT</span><b><i></i> ARMED</b></div>
+                  <div class="heartbeat-orb"><div><small>NEXT SIGNAL</small><strong>71:42:18</strong><span>HEALTHY</span></div></div>
+                  <svg viewBox="0 0 600 50" preserveAspectRatio="none"><path d="M0 26H90L102 26L111 7L120 43L130 16L142 26H260L270 26L281 10L291 40L302 26H420L430 26L441 5L452 45L464 26H600" /></svg>
+                </div>
+                <div class="status-stack"><div><span>ASSETS SECURED</span><b>25,000 GHOST</b><small>ERC-20 escrow</small></div><div><span>RECOVERY AGENT</span><b class="pink-text">ONLINE</b><small>TEE real mode</small></div></div>
+              </div>
+              <div class="preview-table"><div><span>VAULT</span><span>BENEFICIARY</span><span>NEXT PULSE</span><span>STATE</span></div><div><b>Founder continuity</b><span>0x71F2…3A90</span><span>in 71h 42m</span><em>ARMED</em></div><div><b>Treasury recovery</b><span>0x8B19…C411</span><span>in 23h 18m</span><em>ARMED</em></div></div>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div class="aperture" aria-hidden="true">
-            <div class="orbit orbit-a"><i></i></div><div class="orbit orbit-b"><i></i></div>
-            <div class="aperture-core"><small>NEXT PULSE</small><strong>71:59:42</strong><span>ARMED</span></div>
-            <div class="aperture-note note-a">OWNER SIGNAL<br /><b>HEALTHY</b></div>
-            <div class="aperture-note note-b">TEE OBSERVER<br /><b>LISTENING</b></div>
+      <section id="overview" class="section container">
+        <div class="section-heading reveal"><span>BUILT FOR CONTINUITY</span><h2>Your recovery plan,<br />always on and verifiable.</h2><p>GhostVault replaces fragile manual handovers with a transparent protocol that remains active around the clock.</p></div>
+        <div class="feature-row reveal">
+          <div class="feature-copy"><div class="chips"><span>Heartbeat monitoring</span><span>Autonomous checks</span></div><h3>Prove liveness with one simple signal</h3><p>Send a heartbeat from your wallet. Ritual Scheduler keeps the monitoring loop alive across blocks, without a server or trusted operator.</p><a href="/app.html">Arm a heartbeat <b>↗</b></a></div>
+          <div class="visual heartbeat-visual"><div class="radar"><i></i><div><small>LAST SIGNAL</small><strong>00:00:08</strong><span>CONFIRMED</span></div></div><div class="visual-note"><i></i><span>Next scheduled check</span><b>BLOCK +100</b></div></div>
+        </div>
+        <div id="workflow" class="feature-row reverse reveal">
+          <div class="visual pipeline-visual"><div class="pipeline-head"><span>RECOVERY PIPELINE</span><b>RUNNING</b></div><div class="pipeline-step"><i>1</i><div><b>Fetch external evidence</b><span>TEE HTTP · 0x0801</span></div><em>DONE</em></div><div class="pipeline-step"><i>2</i><div><b>Classify liveness signal</b><span>Enshrined LLM · 0x0802</span></div><em>DONE</em></div><div class="pipeline-step"><i>3</i><div><b>Enforce grace period</b><span>GhostVaultCore</span></div><em>WAIT</em></div><div class="pipeline-line"></div></div>
+          <div class="feature-copy"><div class="chips"><span>TEE verified</span><span>Multi-block automation</span></div><h3>Evidence observed by AI. Outcome decided by code.</h3><p>The model can interpret external signals, but it cannot move assets. Release still requires a missed heartbeat and an elapsed on-chain grace period.</p><a href="#security">Review safeguards <b>↓</b></a></div>
+        </div>
+      </section>
+
+      <section id="security" class="security-section">
+        <div class="container">
+          <div class="section-heading reveal"><span>SECURITY BY CONSTRAINT</span><h2>Powerful safeguards for<br />peace of mind.</h2><p>Every recovery route is bounded by transparent rules and reversible checkpoints.</p></div>
+          <div class="security-grid">
+            <article class="reveal"><div class="icon">⌁</div><h3>On-chain heartbeat</h3><p>A release cannot start until the configured heartbeat window has actually expired.</p><span>TIME VERIFIED</span></article>
+            <article class="reveal"><div class="icon">◫</div><h3>Encrypted payload</h3><p>Only a content hash and URI are committed. Sensitive recovery instructions remain encrypted.</p><span>PRIVATE BY DESIGN</span></article>
+            <article class="reveal"><div class="icon">◎</div><h3>Recoverable grace</h3><p>Owner or guardian can restore the vault at any time before the final deadline.</p><span>FALSE RELEASE DEFENCE</span></article>
+            <article class="reveal"><div class="icon">◇</div><h3>Bounded intelligence</h3><p>LLM results provide evidence only and never grant permission to transfer assets.</p><span>NO AI WITHDRAWAL KEY</span></article>
+            <article class="reveal"><div class="icon">↻</div><h3>Autonomous scheduler</h3><p>Ritual coordinates recurring multi-block checks without relying on a hosted cron service.</p><span>ALWAYS ON</span></article>
+            <article class="reveal"><div class="icon">✓</div><h3>Verifiable receipt</h3><p>Every completed recovery mints a soulbound ERC-721 record of the settlement.</p><span>ON-CHAIN PROOF</span></article>
           </div>
+        </div>
+      </section>
 
-          <div class="signal-strip"><span>HEARTBEAT_000184</span><svg viewBox="0 0 700 50" preserveAspectRatio="none"><path d="M0 25H120L132 25L141 7L151 43L161 17L174 25H300L310 25L320 10L330 40L340 25H470L480 25L491 5L502 45L514 25H700" /></svg><b>VALID</b></div>
-        </section>
+      <section id="faq" class="faq container">
+        <div class="section-heading reveal"><span>QUESTIONS, ANSWERED</span><h2>Understand your vault.</h2><p>Everything important before you arm an autonomous recovery policy.</p></div>
+        <div class="faq-list reveal">
+          <details><summary>Can the AI release my assets by itself?<i>＋</i></summary><p>No. The LLM only classifies evidence. GhostVaultCore requires both a missed heartbeat and the full grace period before anyone can finalize a release.</p></details>
+          <details><summary>What happens if Ritual precompiles are temporarily unavailable?<i>＋</i></summary><p>The Agent includes an owner-controlled bypass mode for testnet resilience. It is disabled on the live deployment and cannot bypass the Core contract's time conditions.</p></details>
+          <details><summary>Can I stop a recovery after the grace period begins?<i>＋</i></summary><p>Yes, until the grace deadline. The vault owner or designated guardian can send a heartbeat to return the vault to Armed state.</p></details>
+          <details><summary>Do I need to connect a wallet to view vaults?<i>＋</i></summary><p>No. The dashboard reads Ritual's public RPC immediately. A wallet is required only for actions that create or change on-chain state.</p></details>
+        </div>
+      </section>
 
-        <section id="manifest" class="manifest reveal">
-          <div class="folio-label"><span>01</span><p>THE MANIFEST</p></div>
-          <div class="manifest-statement">
-            <p>Most vaults protect access.</p>
-            <h2>This one protects<br /><em>intent over time.</em></h2>
-          </div>
-          <div class="manifest-aside"><span>NO MULTISIG COMMITTEE</span><span>NO HUMAN EXECUTOR</span><span>NO AI WITHDRAWAL KEY</span></div>
-        </section>
+      <section class="cta container reveal"><div><span>YOUR SIGNAL. YOUR CONDITIONS.</span><h2>Build a recovery plan<br />that does not depend on trust.</h2><p>Start with testnet GHOST and experience the complete autonomous flow.</p><a class="button" href="/app.html">Launch GhostVault <b>↗</b></a></div></section>
+    </main>
 
-        <section id="sequence" class="sequence">
-          <div class="folio-label reveal"><span>02</span><p>RECOVERY SEQUENCE</p></div>
-          <div class="sequence-line">
-            <article class="reveal"><div class="sequence-marker">A</div><time>T—72H</time><h3>Intent is sealed</h3><p>GHOST enters escrow. An encrypted recovery package is committed by hash.</p><code>CORE / ERC-20</code></article>
-            <article class="reveal"><div class="sequence-marker">B</div><time>RECURRING</time><h3>A pulse stays alive</h3><p>The owner or guardian sends a heartbeat while Ritual Scheduler keeps watch.</p><code>SCHEDULER / 10-ARG</code></article>
-            <article class="reveal"><div class="sequence-marker">C</div><time>SILENCE</time><h3>Evidence is observed</h3><p>TEE HTTP and LLM precompiles classify context without controlling funds.</p><code>0x0801 → 0x0802</code></article>
-            <article class="reveal"><div class="sequence-marker">D</div><time>GRACE END</time><h3>Code settles</h3><p>After a recoverable grace window, anyone can finalize deterministic release.</p><code>RECEIPT / ERC-721</code></article>
-          </div>
-        </section>
-
-        <section id="guardrails" class="guardrails">
-          <div class="guard-copy reveal"><div class="folio-label"><span>03</span><p>HARD GUARDRAILS</p></div><h2>The model may<br />raise a flag.<br /><em>It cannot open<br />the vault.</em></h2></div>
-          <div class="guard-ledger">
-            <div class="reveal"><span>01</span><p><b>Two clocks must expire.</b><br />A heartbeat deadline and a separate grace period.</p><i>TIME-LOCKED</i></div>
-            <div class="reveal"><span>02</span><p><b>Recovery remains reversible.</b><br />Owner or guardian can reactivate during grace.</p><i>HUMAN-SAFE</i></div>
-            <div class="reveal"><span>03</span><p><b>AI has no asset authority.</b><br />Precompile results become evidence, never a transfer permission.</p><i>BOUNDED</i></div>
-            <div class="reveal"><span>04</span><p><b>Failure has a fallback.</b><br />Owner-controlled bypass mode keeps testnet flows operational.</p><i>RESILIENT</i></div>
-          </div>
-        </section>
-
-        <section class="exit-panel reveal">
-          <div><span>DEPLOYED SYSTEM</span><strong>4 CONTRACTS</strong></div><div><span>AGENT FEE RESERVE</span><strong>0.1 RITUAL</strong></div><div><span>EXECUTION LAYER</span><strong>CHAIN 1979</strong></div>
-          <a href="/app.html"><small>OPEN THE</small>CONTROL ROOM <b>↗</b></a>
-        </section>
-      </main>
-
-      <footer><a class="wordmark" href="#top">GHOST<span>VAULT</span></a><p>AUTONOMOUS RECOVERY ON RITUAL TESTNET</p><span>MMXXVI</span></footer>
-    </div>
+    <footer class="container footer"><div><a class="brand" href="#top"><span class="brand-mark">G</span><b>GhostVault</b></a><p>Autonomous recovery infrastructure on Ritual.</p></div><div><b>Product</b><a href="#overview">Overview</a><a href="#workflow">Workflow</a><a href="#security">Security</a></div><div><b>Network</b><a href="https://explorer.ritualfoundation.org" target="_blank" rel="noreferrer">Explorer</a><a href="/app.html">Dashboard</a><a href="#faq">FAQ</a></div></footer>
     <script type="module" src="/src/landing.js"></script>
   </body>
 </html>

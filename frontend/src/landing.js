@@ -12,7 +12,7 @@ const progress = document.querySelector(".scroll-line i");
 const cursor = document.querySelector(".cursor-light");
 window.addEventListener("scroll", () => {
   const max = document.documentElement.scrollHeight - innerHeight;
-  progress.style.transform = `scaleY(${max ? scrollY / max : 0})`;
+  progress.style.transform = `scaleX(${max ? scrollY / max : 0})`;
 }, { passive: true });
 if (matchMedia("(pointer:fine)").matches) {
   addEventListener("pointermove", (event) => {
