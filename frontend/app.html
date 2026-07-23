@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GhostVault — Vault dashboard</title>
+    <title>GhostVault - Vault dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/control-room.css" />
@@ -39,7 +39,7 @@
         <div class="form-grid three"><label>Amount (GHOST)<input name="amount" type="number" min="1" step="0.01" required /></label><label>Heartbeat (hours)<input name="heartbeat" type="number" min="0.084" step="0.01" required /></label><label>Grace (hours)<input name="grace" type="number" min="0.084" step="0.01" required /></label></div>
         <label>Encrypted payload URI<input name="payloadURI" maxlength="512" required placeholder="https://storage.example/encrypted.bin" /></label>
         <label>Payload secret / description<textarea name="payload" required placeholder="Encrypted recovery instructions"></textarea></label>
-        <label>External status URL (optional)<input name="statusURL" type="url" maxlength="512" placeholder="https://example.com/liveness.json" /></label>
+        <label>External status URL<input name="statusURL" type="url" maxlength="512" required placeholder="https://api.example.com/liveness.json" /></label>
         <label>Recovery policy<textarea name="policy" maxlength="1500" required placeholder="Describe how external evidence should be classified"></textarea></label>
         <button class="primary-button submit" type="submit">Approve escrow & arm vault</button>
       </form>

@@ -18,7 +18,7 @@ contract GhostVaultTest is Test {
     address constant REGISTRY = 0x9644e8562cE0Fe12b4deeC4163c064A8862Bf47F;
     address constant HTTP = address(0x0801);
     address constant LLM = address(0x0802);
-    address constant JQ = address(0x0904);
+    address constant JQ = address(0x0803);
 
     GhostToken token;
     VaultReceipt receipt;
@@ -35,6 +35,9 @@ contract GhostVaultTest is Test {
         vm.etch(HTTP, address(new MockHTTPPrecompile()).code);
         vm.etch(LLM, address(new MockLLMPrecompile()).code);
         vm.etch(JQ, address(new MockJQPrecompile()).code);
+        MockHTTPPrecompile(HTTP).configure(false);
+        MockLLMPrecompile(LLM).configure("inactive", 88, false);
+        MockJQPrecompile(JQ).configure("inactive", 88);
 
         token = new GhostToken(address(this));
         receipt = new VaultReceipt(address(this));
@@ -77,6 +80,77 @@ contract GhostVaultTest is Test {
         assertTrue(vault.resultHash != bytes32(0));
     }
 
+    function testAliveSignalDoesNotStartGrace() public {
+        MockLLMPrecompile(LLM).configure("alive", 97, false);
+        MockJQPrecompile(JQ).configure("alive", 97);
+        uint256 vaultId = _createVault("https://status.example/alice.json");
+        vm.warp(block.timestamp + 1 hours + 1);
+        MockScheduler(SCHEDULER).trigger(1, 0);
+        MockScheduler(SCHEDULER).trigger(2, 0);
+        MockScheduler(SCHEDULER).trigger(3, 0);
+        GhostVaultCore.Vault memory vault = core.getVault(vaultId);
+        assertEq(uint8(vault.state), uint8(GhostVaultCore.VaultState.Armed));
+        assertEq(vault.releaseAt, 0);
+        assertTrue(vault.evidenceHash != bytes32(0));
+        assertTrue(vault.resultHash != bytes32(0));
+    }
+
+    function testLowConfidenceInactiveDoesNotStartGrace() public {
+        MockLLMPrecompile(LLM).configure("inactive", 60, false);
+        MockJQPrecompile(JQ).configure("inactive", 60);
+        uint256 vaultId = _createVault("https://status.example/alice.json");
+        vm.warp(block.timestamp + 1 hours + 1);
+        MockScheduler(SCHEDULER).trigger(1, 0);
+        MockScheduler(SCHEDULER).trigger(2, 0);
+        MockScheduler(SCHEDULER).trigger(3, 0);
+        GhostVaultCore.Vault memory vault = core.getVault(vaultId);
+        assertEq(uint8(vault.state), uint8(GhostVaultCore.VaultState.Armed));
+        assertEq(vault.releaseAt, 0);
+    }
+
+    function testHttpFailureFailsClosedAndAllowsRetry() public {
+        MockHTTPPrecompile(HTTP).configure(true);
+        uint256 vaultId = _createVault("https://status.example/alice.json");
+        vm.warp(block.timestamp + 1 hours + 1);
+        MockScheduler(SCHEDULER).trigger(1, 0);
+        MockScheduler(SCHEDULER).trigger(2, 0);
+        GhostVaultCore.Vault memory vault = core.getVault(vaultId);
+        assertEq(uint8(vault.state), uint8(GhostVaultCore.VaultState.Armed));
+        assertEq(uint8(agent.getCheck(vaultId).stage), uint8(GhostVaultAgent.CheckStage.None));
+        assertEq(vault.resultHash, bytes32(0));
+    }
+
+    function testLlmFailureFailsClosedAndAllowsRetry() public {
+        MockLLMPrecompile(LLM).configure("inactive", 88, true);
+        uint256 vaultId = _createVault("https://status.example/alice.json");
+        vm.warp(block.timestamp + 1 hours + 1);
+        MockScheduler(SCHEDULER).trigger(1, 0);
+        MockScheduler(SCHEDULER).trigger(2, 0);
+        MockScheduler(SCHEDULER).trigger(3, 0);
+        GhostVaultCore.Vault memory vault = core.getVault(vaultId);
+        assertEq(uint8(vault.state), uint8(GhostVaultCore.VaultState.Armed));
+        assertEq(uint8(agent.getCheck(vaultId).stage), uint8(GhostVaultAgent.CheckStage.None));
+        assertEq(vault.resultHash, bytes32(0));
+    }
+
+    function testRejectsMissingStatusUrl() public {
+        vm.prank(alice);
+        vm.expectRevert("invalid status URL");
+        core.createVault(
+            "Invalid recovery vault", bob, guardian, 100 ether, 1 hours, 10 minutes, 100,
+            keccak256("encrypted-payload"), "https://storage.example/encrypted.bin", "",
+            "External liveness evidence is required."
+        );
+    }
+
+    function testMonitoringRenewsBeforeScheduleLifespanEnds() public {
+        uint256 vaultId = _createVault("https://status.example/alice.json");
+        assertEq(agent.activeScheduleByVault(vaultId), 1);
+        MockScheduler(SCHEDULER).trigger(1, 2);
+        assertEq(agent.activeScheduleByVault(vaultId), 2);
+        assertEq(agent.vaultBySchedule(2), vaultId);
+    }
+
     function testHeartbeatReactivatesDuringGrace() public {
         agent.setBypassPrecompiles(true, bytes32(0), bytes32(0));
         uint256 vaultId = _createVault("");
@@ -114,12 +188,14 @@ contract GhostVaultTest is Test {
     }
 
     function _createVault(string memory statusURL) internal returns (uint256 vaultId) {
+        string memory effectiveStatusURL = bytes(statusURL).length == 0
+            ? "https://status.example/default.json"
+            : statusURL;
         vm.prank(alice);
         vaultId = core.createVault(
             "Alice recovery vault", bob, guardian, 100 ether, 1 hours, 10 minutes, 100,
-            keccak256("encrypted-payload"), "https://storage.example/encrypted.bin", statusURL,
+            keccak256("encrypted-payload"), "https://storage.example/encrypted.bin", effectiveStatusURL,
             "Begin recovery if the owner misses the onchain heartbeat. External evidence is informational."
         );
     }
 }
-

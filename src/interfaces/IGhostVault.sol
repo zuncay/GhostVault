@@ -7,7 +7,13 @@ interface IGhostVaultCore {
         view
         returns (uint8 state, uint256 heartbeatDeadline, string memory statusUrl, string memory policy);
 
-    function onMonitoringResult(uint256 vaultId, bytes32 evidenceHash, bytes32 resultHash) external;
+    function onMonitoringResult(
+        uint256 vaultId,
+        bytes32 evidenceHash,
+        bytes32 resultHash,
+        uint8 outcome,
+        uint8 confidence
+    ) external;
 }
 
 interface IGhostVaultAgent {
@@ -15,4 +21,3 @@ interface IGhostVaultAgent {
     function requestCheck(uint256 vaultId) external returns (uint256);
     function cancelMonitoring(uint256 scheduleId) external;
 }
-

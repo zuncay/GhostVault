@@ -35,6 +35,9 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
 
     uint48 public constant MIN_HEARTBEAT_INTERVAL = 5 minutes;
     uint48 public constant MIN_GRACE_PERIOD = 5 minutes;
+    uint8 public constant OUTCOME_ALIVE = 1;
+    uint8 public constant OUTCOME_INACTIVE = 2;
+    uint8 public constant MIN_INACTIVE_CONFIDENCE = 75;
 
     IERC20 public immutable assetToken;
     VaultReceipt public immutable receipt;
@@ -47,6 +50,13 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
     event Heartbeat(uint256 indexed vaultId, address indexed caller, uint256 nextDeadline);
     event MonitoringScheduled(uint256 indexed vaultId, uint256 indexed scheduleId);
     event GraceStarted(uint256 indexed vaultId, uint256 releaseAt, bytes32 evidenceHash, bytes32 resultHash);
+    event MonitoringObserved(
+        uint256 indexed vaultId,
+        uint8 indexed outcome,
+        uint8 confidence,
+        bytes32 evidenceHash,
+        bytes32 resultHash
+    );
     event VaultReleased(uint256 indexed vaultId, address indexed beneficiary, uint256 amount);
     event VaultCancelled(uint256 indexed vaultId, uint256 amountReturned);
 
@@ -66,6 +76,13 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
         require(address(agent) == address(0), "agent already set");
         agent = newAgent;
         emit AgentConfigured(address(newAgent));
+    }
+
+    /// @dev Ritual testnet currently exposes millisecond block timestamps; normalize to Unix seconds.
+    function _clock() internal view returns (uint48) {
+        uint256 timestamp = block.timestamp;
+        if (timestamp > 10_000_000_000) timestamp /= 1_000;
+        return uint48(timestamp);
     }
 
     function createVault(
@@ -88,9 +105,10 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
         require(amount != 0, "zero amount");
         require(heartbeatInterval >= MIN_HEARTBEAT_INTERVAL, "heartbeat too short");
         require(gracePeriod >= MIN_GRACE_PERIOD, "grace too short");
-        require(monitorFrequencyBlocks >= 10 && monitorFrequencyBlocks <= 100_000, "invalid frequency");
+        require(monitorFrequencyBlocks >= 10 && monitorFrequencyBlocks <= 4_000, "invalid frequency");
         require(payloadHash != bytes32(0), "zero payload hash");
-        require(bytes(payloadURI).length <= 512 && bytes(statusURL).length <= 512, "URI too long");
+        require(bytes(payloadURI).length <= 512, "payload URI too long");
+        require(bytes(statusURL).length != 0 && bytes(statusURL).length <= 512, "invalid status URL");
         require(bytes(policy).length != 0 && bytes(policy).length <= 1_500, "invalid policy");
 
         vaultId = nextVaultId++;
@@ -99,7 +117,7 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
         vault.beneficiary = beneficiary;
         vault.guardian = guardian;
         vault.amount = amount;
-        vault.lastHeartbeat = uint48(block.timestamp);
+        vault.lastHeartbeat = _clock();
         vault.heartbeatInterval = heartbeatInterval;
         vault.gracePeriod = gracePeriod;
         vault.state = VaultState.Armed;
@@ -120,11 +138,12 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
         Vault storage vault = _getVault(vaultId);
         require(msg.sender == vault.owner || msg.sender == vault.guardian, "not owner or guardian");
         require(vault.state == VaultState.Armed || vault.state == VaultState.Grace, "vault inactive");
-        require(vault.state != VaultState.Grace || block.timestamp < vault.releaseAt, "grace ended");
-        vault.lastHeartbeat = uint48(block.timestamp);
+        uint48 nowSeconds = _clock();
+        require(vault.state != VaultState.Grace || nowSeconds < vault.releaseAt, "grace ended");
+        vault.lastHeartbeat = nowSeconds;
         vault.releaseAt = 0;
         vault.state = VaultState.Armed;
-        emit Heartbeat(vaultId, msg.sender, block.timestamp + vault.heartbeatInterval);
+        emit Heartbeat(vaultId, msg.sender, uint256(nowSeconds) + vault.heartbeatInterval);
     }
 
     function pokeVault(uint256 vaultId) external returns (uint256 scheduleId) {
@@ -133,16 +152,27 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
         scheduleId = agent.requestCheck(vaultId);
     }
 
-    function onMonitoringResult(uint256 vaultId, bytes32 evidenceHash, bytes32 resultHash)
+    function onMonitoringResult(
+        uint256 vaultId,
+        bytes32 evidenceHash,
+        bytes32 resultHash,
+        uint8 outcome,
+        uint8 confidence
+    )
         external
         onlyAgent
     {
         Vault storage vault = _getVault(vaultId);
         require(vault.state == VaultState.Armed, "vault not armed");
-        require(block.timestamp > uint256(vault.lastHeartbeat) + vault.heartbeatInterval, "heartbeat active");
+        uint48 nowSeconds = _clock();
+        require(nowSeconds > uint256(vault.lastHeartbeat) + vault.heartbeatInterval, "heartbeat active");
+        require(outcome == OUTCOME_ALIVE || outcome == OUTCOME_INACTIVE, "invalid outcome");
+        require(confidence <= 100, "invalid confidence");
         vault.evidenceHash = evidenceHash;
         vault.resultHash = resultHash;
-        vault.releaseAt = uint48(block.timestamp + vault.gracePeriod);
+        emit MonitoringObserved(vaultId, outcome, confidence, evidenceHash, resultHash);
+        if (outcome != OUTCOME_INACTIVE || confidence < MIN_INACTIVE_CONFIDENCE) return;
+        vault.releaseAt = nowSeconds + vault.gracePeriod;
         vault.state = VaultState.Grace;
         emit GraceStarted(vaultId, vault.releaseAt, evidenceHash, resultHash);
     }
@@ -150,7 +180,7 @@ contract GhostVaultCore is Ownable, ReentrancyGuard {
     function finalizeRelease(uint256 vaultId) external nonReentrant {
         Vault storage vault = _getVault(vaultId);
         require(vault.state == VaultState.Grace, "vault not in grace");
-        require(block.timestamp >= vault.releaseAt, "grace active");
+        require(_clock() >= vault.releaseAt, "grace active");
         uint256 amount = vault.amount;
         vault.amount = 0;
         vault.state = VaultState.Released;

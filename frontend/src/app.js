@@ -134,7 +134,7 @@ async function createVault(form) {
   const guardian = data.get("guardian") || zeroAddress;
   const payloadHash = keccak256(toBytes(data.get("payload")));
   await write(addresses.token, tokenAbi, "approve", [addresses.core, amount], "Approving GHOST escrow");
-  await write(addresses.core, coreAbi, "createVault", [data.get("name"), data.get("beneficiary"), guardian, amount, heartbeat, grace, 100, payloadHash, data.get("payloadURI"), data.get("statusURL"), data.get("policy")], "Arming autonomous vault");
+  await write(addresses.core, coreAbi, "createVault", [data.get("name"), data.get("beneficiary"), guardian, amount, heartbeat, grace, 1000, payloadHash, data.get("payloadURI"), data.get("statusURL"), data.get("policy")], "Arming autonomous vault");
 }
 
 function log(title, detail) {
@@ -157,8 +157,9 @@ $("#fill-showcase").addEventListener("click", () => {
   form.beneficiary.value = randomAddress(); form.guardian.value = randomAddress(); form.amount.value = "25";
   form.heartbeat.value = "0.1"; form.grace.value = "0.1";
   form.payloadURI.value = "https://raw.githubusercontent.com/ritual-foundation/ritual-dapp-skills/main/LICENSE";
-  form.payload.value = `encrypted-recovery-package-${crypto.randomUUID()}`; form.statusURL.value = "";
-  form.policy.value = "Classify the public liveness evidence. The contract must still enforce the missed heartbeat and grace period.";
+  form.payload.value = `encrypted-recovery-package-${crypto.randomUUID()}`;
+  form.statusURL.value = "https://api.github.com/repos/ritual-foundation/ritual-dapp-skills/languages";
+  form.policy.value = "Classify the repository language response as alive when it contains non-zero language activity. Return inactive only when the evidence explicitly confirms prolonged inactivity; otherwise return unknown.";
 });
 $("#create-form").addEventListener("submit", async (event) => { event.preventDefault(); try { await createVault(event.currentTarget); $("#create-dialog").close(); event.currentTarget.reset(); } catch (e) { log("Create vault failed", escapeHtml(e.shortMessage || e.message)); } });
 $("#vault-list").addEventListener("click", async (event) => {

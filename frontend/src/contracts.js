@@ -1,8 +1,8 @@
 export const addresses = {
-  core: import.meta.env.VITE_CORE_ADDRESS || "0x006BdFeE1C2BA7E985Af12C62Cc9d08d94126eCf",
-  agent: import.meta.env.VITE_AGENT_ADDRESS || "0x1E7C5eA5182A750CF35a283dCF51f506e593bFC1",
-  token: import.meta.env.VITE_TOKEN_ADDRESS || "0x0A0bfC9c4B040eAdf1Eb259fAc4c067865789eae",
-  receipt: import.meta.env.VITE_RECEIPT_ADDRESS || "0x9403F7A235EaDa786958D900ccC047aB4Ea5b4bE"
+  core: import.meta.env.VITE_CORE_ADDRESS || "0x790732793fc7ac36a55FfE5311cc79576602118b",
+  agent: import.meta.env.VITE_AGENT_ADDRESS || "0xA3aF41dDb387E60C32c2D777B3a606632EbFdd08",
+  token: import.meta.env.VITE_TOKEN_ADDRESS || "0x561b92482FA47DbB94361C7D91060d7B51A3E8Cd",
+  receipt: import.meta.env.VITE_RECEIPT_ADDRESS || "0xAEE203f72E4d038FF895948cFEC7b72e05cca6b4"
 };
 
 const vaultComponents = [
