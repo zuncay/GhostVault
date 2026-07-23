@@ -5,29 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GhostVault — Control room</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/control-room.css" />
   </head>
-  <body class="app-page">
-    <div class="grain"></div>
-    <nav class="nav shell"><a class="brand" href="/"><span>G</span>GhostVault</a><div class="rpc-pill"><i id="rpc-dot"></i><span id="rpc-status">Connecting to Ritual</span></div><button id="connect" class="button small">Connect wallet</button></nav>
-    <main class="dashboard shell">
-      <header class="dash-head"><div><div class="eyebrow"><i></i> AUTONOMOUS RECOVERY CONTROL</div><h1>Your vaults</h1><p>Read the registry without a wallet. Connect only when you need to act.</p></div><div class="head-actions"><button id="faucet" class="ghost-button">Claim GHOST</button><button id="open-create" class="button">New vault +</button></div></header>
-      <section class="metrics"><article><span>Latest block</span><b id="block">—</b><small>Ritual Testnet</small></article><article><span>Total vaults</span><b id="total">—</b><small>On-chain registry</small></article><article><span>Agent balance</span><b id="fees">—</b><small>Scheduler budget</small></article><article><span>Account</span><b id="account">Read only</b><small id="balance">No signature required</small></article></section>
-      <section class="vault-layout"><div><div class="list-head"><h2>Vault registry</h2><button id="refresh" class="ghost-button">Refresh ↻</button></div><div id="warning" class="notice hidden"></div><div id="vault-list" class="vault-list"><div class="empty">Loading vaults…</div></div></div><aside class="activity"><div class="list-head"><h2>Activity</h2><span>LIVE</span></div><div id="activity"><p>Public RPC is loading contract state. Wallet actions will appear here.</p></div></aside></section>
-    </main>
+  <body>
+    <div class="noise"></div>
+    <aside class="command-rail">
+      <a class="sigil" href="/">GV</a>
+      <div class="rail-group"><button class="rail-icon active" aria-label="Vault registry">⌁</button><button class="rail-icon" aria-label="Signal monitor">⌇</button><button class="rail-icon" aria-label="System status">◎</button></div>
+      <a class="rail-back" href="/">←</a>
+    </aside>
+
+    <div class="workspace">
+      <header class="terminal-bar">
+        <div><span>GHOSTVAULT</span><b>/</b><strong>CONTROL_ROOM</strong></div>
+        <div class="rpc-pill"><i id="rpc-dot"></i><span id="rpc-status">CONNECTING TO RITUAL</span></div>
+        <button id="connect" class="connect-button">CONNECT WALLET</button>
+      </header>
+
+      <main>
+        <section class="command-head">
+          <div><p>RECOVERY OPERATIONS / CHAIN 1979</p><h1>Signal monitor</h1><span>Public registry is live before wallet connection.</span></div>
+          <div class="command-actions"><button id="faucet" class="line-button">GET TEST GHOST</button><button id="open-create" class="primary-button">＋ ARM NEW VAULT</button></div>
+        </section>
+
+        <section class="telemetry">
+          <article><span>BLOCK HEIGHT</span><b id="block">—</b><i>LIVE RPC</i></article>
+          <article><span>ARMED REGISTRY</span><b id="total">—</b><i>VAULTS</i></article>
+          <article><span>AGENT RESERVE</span><b id="fees">—</b><i>SCHEDULER</i></article>
+          <article><span>OPERATOR</span><b id="account">READ ONLY</b><i id="balance">NO SIGNATURE</i></article>
+          <div class="telemetry-wave"><svg viewBox="0 0 500 36" preserveAspectRatio="none"><path d="M0 18H80L88 4L98 32L108 12L118 18H230L240 7L250 29L260 18H370L380 2L390 34L402 18H500" /></svg></div>
+        </section>
+
+        <section class="operations">
+          <div class="registry-panel">
+            <div class="panel-title"><div><span>01</span><h2>VAULT REGISTRY</h2></div><button id="refresh" class="refresh-button">SYNC ↻</button></div>
+            <div id="warning" class="notice hidden"></div>
+            <div id="vault-list" class="vault-list"><div class="empty">QUERYING ON-CHAIN REGISTRY…</div></div>
+          </div>
+          <aside class="event-dock">
+            <div class="panel-title"><div><span>02</span><h2>EVENT STREAM</h2></div><i>LIVE</i></div>
+            <div id="activity"><p>RPC reads appear here immediately. Wallet actions are appended after connection.</p></div>
+            <div class="agent-state"><span>TEE AGENT</span><b><i></i> REAL MODE</b><small>HTTP 0x0801<br />LLM 0x0802</small></div>
+          </aside>
+        </section>
+      </main>
+    </div>
 
     <dialog id="create-dialog" class="modal">
-      <form id="create-form"><div class="modal-head"><div><span>NEW RECOVERY VAULT</span><h2>Arm a heartbeat</h2></div><button type="button" class="close">×</button></div>
-        <div class="showcase"><p>Need quick test values?</p><button id="fill-showcase" type="button" class="ghost-button">Generate showcase data ✦</button></div>
-        <label>Vault name<input name="name" maxlength="72" required placeholder="Founder recovery vault" /></label>
-        <div class="form-grid"><label>Beneficiary<input name="beneficiary" pattern="0x[0-9a-fA-F]{40}" required placeholder="0x…" /></label><label>Guardian (optional)<input name="guardian" pattern="0x[0-9a-fA-F]{40}" placeholder="0x…" /></label></div>
-        <div class="form-grid three"><label>Amount (GHOST)<input name="amount" type="number" min="1" step="0.01" required /></label><label>Heartbeat (hours)<input name="heartbeat" type="number" min="0.084" step="0.01" required /></label><label>Grace (hours)<input name="grace" type="number" min="0.084" step="0.01" required /></label></div>
-        <label>Encrypted payload URI<input name="payloadURI" maxlength="512" required placeholder="https://storage.example/encrypted.bin" /></label>
-        <label>Payload secret / description<textarea name="payload" required placeholder="Encrypted recovery instructions"></textarea></label>
-        <label>External status URL (optional)<input name="statusURL" type="url" maxlength="512" placeholder="https://example.com/liveness.json" /></label>
-        <label>Recovery policy<textarea name="policy" maxlength="1500" required placeholder="Describe how external evidence should be classified"></textarea></label>
-        <button class="button full" type="submit">Approve escrow & arm vault</button>
+      <form id="create-form">
+        <div class="modal-head"><div><span>VAULT ASSEMBLY / NEW</span><h2>Arm a heartbeat</h2></div><button type="button" class="close">×</button></div>
+        <div class="showcase"><p>Generate safe testnet fields for a quick transaction.</p><button id="fill-showcase" type="button" class="line-button">GENERATE TEST DATA ✦</button></div>
+        <label>VAULT NAME<input name="name" maxlength="72" required placeholder="Founder recovery vault" /></label>
+        <div class="form-grid"><label>BENEFICIARY<input name="beneficiary" pattern="0x[0-9a-fA-F]{40}" required placeholder="0x…" /></label><label>GUARDIAN / OPTIONAL<input name="guardian" pattern="0x[0-9a-fA-F]{40}" placeholder="0x…" /></label></div>
+        <div class="form-grid three"><label>AMOUNT / GHOST<input name="amount" type="number" min="1" step="0.01" required /></label><label>HEARTBEAT / HOURS<input name="heartbeat" type="number" min="0.084" step="0.01" required /></label><label>GRACE / HOURS<input name="grace" type="number" min="0.084" step="0.01" required /></label></div>
+        <label>ENCRYPTED PAYLOAD URI<input name="payloadURI" maxlength="512" required placeholder="https://storage.example/encrypted.bin" /></label>
+        <label>PAYLOAD SECRET / DESCRIPTION<textarea name="payload" required placeholder="Encrypted recovery instructions"></textarea></label>
+        <label>EXTERNAL STATUS URL / OPTIONAL<input name="statusURL" type="url" maxlength="512" placeholder="https://example.com/liveness.json" /></label>
+        <label>RECOVERY POLICY<textarea name="policy" maxlength="1500" required placeholder="Describe how external evidence should be classified"></textarea></label>
+        <button class="primary-button submit" type="submit">APPROVE ESCROW + ARM VAULT</button>
       </form>
     </dialog>
     <script type="module" src="/src/app.js"></script>
